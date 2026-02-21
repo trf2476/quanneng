@@ -1,71 +1,328 @@
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN" class="old-theme">
 <head>
-    <meta charset="utf-8">
-    <title>全能计算器 | trf2476</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全能计算器 v4.0 | trf2476</title>
     <link rel="icon" href="/quanneng/ico/全能计算器 v3.1.ico" type="image/png">
-    <meta name="author" content="trf2476">    
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="/quanneng/quanneng/ico/全能计算器 v3.1.ico" type="image/png">
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	
+    <meta name="author" content="trf2476">
+    
+    <style>
+        /* ==========================================================================
+           0. 底层背景同步 & 环境氛围光 (流光溢彩)
+           ========================================================================== */
+        /* 底色改为极其深邃的午夜蓝，而非死黑 */
+        html { transition: background-color 1.2s cubic-bezier(0.76, 0, 0.24, 1); }
+        html.old-theme { background-color: #ffffff; }
+        html.new-theme { background-color: #05050e; }
 
-	</head>
-<body>
-	<div class="container">
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-			<nav class="navbar navbar-default" role="navigation">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="#">trf2476</a>
-				</div>
-				
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-                        <li>
-							 <a href="/">首页</a>
-						</li>
-						<li class="active">
-							 <a href="#">全能计算器</a>
-						</li>
-						<li>
-							 <a href="/mcfuwuqi">MC服务器</a>
-						</li>						
-						<li>					
-                        <a href="https://trf2476.blog.luogu.org/">洛谷博客</a>
-						</li>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</div>
-	</div>
-<div class="jumbotron text-center">
-  <h1>全能计算器</h1>
-  <h2><span class="badge badge-info">v3.2a</span></h2>
-  <p>快速 · 简洁 · 方便</p>
-</div>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            min-height: 100vh;
+            overflow-x: hidden; 
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; 
+            -webkit-font-smoothing: antialiased; 
+            transition: background-color 1.2s cubic-bezier(0.76, 0, 0.24, 1), color 1.2s;
+        }
+        
+        body.old-theme { background-color: #ffffff; color: #333; }
+        body.new-theme { background-color: #05050e; color: #f5f5f7; }
+        
+        /* --- 绚丽的流光溢彩背景 --- */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            opacity: 0; transition: opacity 3s ease 1s; /* 延迟1秒，在变黑后缓缓浮现 */
+        }
+        body.new-theme .ambient-bg { opacity: 1; }
+
+        .color-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px); /* 极其强烈的模糊，制造高级光晕感 */
+            animation: drift 15s infinite alternate ease-in-out;
+            opacity: 0.6;
+        }
+        /* 魅惑紫 */
+        .blob-1 { width: 60vw; height: 60vw; background: #5a189a; top: -20%; left: -10%; animation-delay: 0s; }
+        /* 深海蓝 */
+        .blob-2 { width: 50vw; height: 50vw; background: #0077b6; bottom: -10%; right: -20%; animation-delay: -5s; }
+        /* 赛博青 */
+        .blob-3 { width: 40vw; height: 40vw; background: #00f5d4; top: 40%; left: 30%; animation-delay: -10s; opacity: 0.3; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(8%, 8%) scale(1.1); }
+        }
+
+        .morph { transition: all 1.2s cubic-bezier(0.76, 0, 0.24, 1); }
+
+        /* ==========================================================================
+           1. 导航栏平滑演变
+           ========================================================================== */
+        .smart-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; }
+        .nav-container { display: flex; align-items: center; margin: 0 auto; height: 100%; position: relative;}
+        .nav-brand { text-decoration: none; display: flex; align-items: center; white-space: nowrap;}
+        .nav-links { display: flex; list-style: none; margin: 0; padding: 0; }
+        .nav-links a { text-decoration: none; display: block; white-space: nowrap; transition: color 0.5s;}
+        
+        body.old-theme .smart-nav { background: #f8f8f8; border-bottom: 1px solid #e7e7e7; height: 50px; }
+        body.old-theme .nav-container { width: 1170px; max-width: 100%; padding: 0 15px; }
+        body.old-theme .nav-brand { color: #337ab7; font-size: 18px; padding: 15px; font-weight: bold;}
+        body.old-theme .nav-spacer { flex-grow: 0; width: 0; }
+        body.old-theme .nav-links { gap: 0px; }
+        body.old-theme .nav-links li a { color: #777; padding: 15px; line-height: 20px; font-size: 14px;}
+        body.old-theme .nav-links li.active a { color: #555; background: #e7e7e7; }
+        
+        body.new-theme .smart-nav { background: rgba(5,5,14,0.6); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255,255,255,0.08); height: 60px; }
+        body.new-theme .nav-container { width: 100%; padding: 0 5%; }
+        body.new-theme .nav-brand { color: #fff; font-size: 18px; font-weight: bold; letter-spacing: 1px; padding: 0; }
+        body.new-theme .nav-spacer { flex-grow: 1; }
+        body.new-theme .nav-links { gap: 30px; }
+        body.new-theme .nav-links li a { color: #a1a1a6; padding: 0; font-size: 14px; background: transparent;}
+        body.new-theme .nav-links li.active a { color: #fff; background: transparent; }
+
+        /* ==========================================================================
+           2. 首屏巨幕与文字绝对平滑过渡
+           ========================================================================== */
+        .page-container { min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        
+        body.old-theme .page-container { padding-top: 80px; }
+        body.new-theme .page-container { padding-top: 0; }
+
+        .smart-hero { 
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .hero-grey-bg {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: #eee; border-radius: 6px; z-index: 0;
+            transition: opacity 0.5s ease;
+        }
+        body.new-theme .hero-grey-bg { opacity: 0; }
+
+        .hero-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; width: 100%; }
+
+        body.old-theme .smart-hero { width: 1140px; max-width: 90%; margin-bottom: 30px; padding: 48px 60px; min-height: 250px;}
+        body.new-theme .smart-hero { width: 100vw; max-width: 100%; margin: 0; padding: 0; flex-grow: 1; min-height: 100vh; }
+
+        /* 背景Logo */
+        .bg-logo { position: absolute; top: 50%; left: 50%; width: 60vw; max-width: 600px; transform: translate(-50%, -50%) scale(0.8); opacity: 0; filter: blur(2px) grayscale(100%); pointer-events: none; transition: all 2s cubic-bezier(0.76, 0, 0.24, 1); z-index: 0; }
+        body.new-theme .bg-logo { opacity: 0.08; transform: translate(-50%, -50%) scale(1); animation: logo-pulse 8s ease-in-out infinite alternate 1.5s; }
+        @keyframes logo-pulse { 0% { opacity: 0.04; transform: translate(-50%, -50%) scale(0.95); } 100% { opacity: 0.12; transform: translate(-50%, -50%) scale(1.05); } }
+
+        .smart-title { font-weight: 600; }
+        body.old-theme .smart-title { font-size: 63px; letter-spacing: 0px; color: #333; text-shadow: 0 0 0 rgba(255,255,255,0); margin-bottom: 15px; }
+        body.new-theme .smart-title { font-size: 80px; letter-spacing: -2px; color: #ffffff; text-shadow: 0 4px 30px rgba(255,255,255,0.4); margin-bottom: 15px; }
+        
+        body.old-theme .smart-version { font-size: 30px; font-weight: 600; color: #5bc0de; margin-bottom: 15px; border: 1px solid transparent; background: rgba(255,255,255,0); padding: 0 0; border-radius: 0px;}
+        body.new-theme .smart-version { font-size: 14px; font-weight: 600; color: #00f5d4; margin-bottom: 20px; border: 1px solid rgba(0, 245, 212, 0.3); background: rgba(255,255,255,0.05); padding: 4px 14px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,245,212,0.1); }
+        
+        .smart-slogan { overflow: hidden; transition: all 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
+        body.old-theme .smart-slogan { font-size: 21px; font-weight: 400; color: #777; max-height: 50px; opacity: 1; margin: 0; transform: scale(1);}
+        body.new-theme .smart-slogan { font-size: 21px; font-weight: 400; color: #777; max-height: 0; opacity: 0; margin: 0; transform: scale(0.8);}
+
+        /* ==========================================================================
+           3. 新元素与旧日志交替
+           ========================================================================== */
+        .new-elements-container { display: flex; flex-direction: column; align-items: center; overflow: hidden; z-index: 10;}
+        body.old-theme .new-elements-container { max-height: 0; opacity: 0; transform: translateY(30px); margin-top: 0; }
+        body.new-theme .new-elements-container { max-height: 300px; opacity: 1; transform: translateY(0); margin-top: 20px; transition-delay: 0.3s; }
+        
+        .new-slogan-text { font-size: 32px; font-weight: 500; color: #f5f5f7; margin-bottom: 30px; }
+        .btn-apple { display: inline-block; background: #0071e3; color: #fff; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-size: 18px; font-weight: 600; transition: all 0.3s ease; }
+        .btn-apple:hover { transform: scale(1.05); background: #0077ED; box-shadow: 0 4px 25px rgba(0, 113, 227, 0.6); }
+
+        .smart-changelog { width: 1140px; max-width: 90%; margin: 0 auto; transition: max-height 1.2s cubic-bezier(0.76, 0, 0.24, 1); }
+        .changelog-inner { transition: opacity 0.5s ease, transform 0.5s ease; }
+        
+        body.old-theme .smart-changelog { max-height: 1500px; }
+        body.old-theme .changelog-inner { opacity: 1; transform: translateY(0); }
+        body.new-theme .smart-changelog { max-height: 0; overflow: hidden;}
+        body.new-theme .changelog-inner { opacity: 0; transform: translateY(40px); }
+
+        .scroll-indicator { position: absolute; bottom: 40px; left: 50%; margin-left: -50px; color: #a1a1a6; font-size: 14px; text-align: center; animation: bounce 2s infinite; opacity: 0; pointer-events: none; transition: all 1.2s; z-index: 10;}
+        body.new-theme .scroll-indicator { opacity: 1; pointer-events: auto; transition-delay: 1s; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+
+        /* ==========================================================================
+           4. 苹果风特性展示区 (毛玻璃质感升级)
+           ========================================================================== */
+        .features-wrapper { max-width: 1200px; margin: 0 auto; padding: 100px 5%; transition: opacity 1.5s ease 1s; position: relative; z-index: 10; }
+        body.old-theme .features-wrapper { opacity: 0; pointer-events: none; max-height: 0; overflow: hidden; padding: 0 5%;}
+        body.new-theme .features-wrapper { opacity: 1; pointer-events: auto; max-height: 5000px; overflow: visible;}
+
+        .feature-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 150px; gap: 50px; }
+        .feature-row:nth-child(even) { flex-direction: row-reverse; }
+        .feature-text { flex: 1; }
+        .feature-text h2 { font-size: 48px; font-weight: 700; margin-bottom: 20px; letter-spacing: -1px; }
+        .feature-text p { font-size: 20px; color: #a1a1a6; line-height: 1.6; }
+        
+        /* 毛玻璃卡片在有色彩背景下的质感提升 */
+        .feature-visual { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 40px; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; height: 350px; display: flex; align-items: center; justify-content: center; }
+
+        .terminal { width: 100%; background: rgba(20,20,25,0.8); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.5); overflow: hidden; font-family: 'Courier New', Courier, monospace;}
+        .terminal-header { background: rgba(40,40,45,0.6); padding: 10px 15px; display: flex; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.5); }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.red { background: #ff5f56; } .dot.yellow { background: #ffbd2e; } .dot.green { background: #27c93f; }
+        .terminal-body { padding: 20px; font-size: 16px; color: #d4d4d4; line-height: 1.5; }
+        .terminal-body .cmd { color: #00f5d4; }
+        .terminal-body .result { color: #0077b6; font-weight: bold; font-size: 20px; margin-top: 10px; display: block;}
+        
+        .number-waterfall { position: absolute; top: -50%; left: 0; width: 100%; height: 200%; font-family: monospace; font-size: 14px; color: rgba(255,255,255,0.06); line-height: 1; word-wrap: break-word; animation: waterfall 20s linear infinite; text-align: justify; z-index: 0; }
+        @keyframes waterfall { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        .infinity-icon { font-size: 120px; background: linear-gradient(45deg, #0071e3, #00f5d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; z-index: 10; position: relative; }
+
+        .reveal-item { opacity: 0; transform: translateY(60px); transition: all 1s cubic-bezier(0.76, 0, 0.24, 1); }
+        .reveal-item.is-visible { opacity: 1; transform: translateY(0); }
+
+    </style>
+</head>
+<body class="old-theme">
+
+    <!-- 流光溢彩的环境背景 -->
+    <div class="ambient-bg">
+        <div class="color-blob blob-1"></div>
+        <div class="color-blob blob-2"></div>
+        <div class="color-blob blob-3"></div>
     </div>
 
-<div class="container">
-  <div class="row">
-<div class="col-sm-6 col-lg-12">
-      <h2>全能计算器 v3.2a <span class="badge badge-warning">★★★★★</span></h2>
-	
-  <h3>当前版本更新日志</h3>
-<h4><li>增加高精度运算，最高支持1.0*10^10000000内整数的运算！</li></h4>
-<h4><li>代码全部重写！不那么ugly了！</li></h4>
-<h4><li>欢迎访问 trf2476.gitee.io/quanneng !</li></h4>
-  <h4><li>修复亿些bug。（2021.2）</li></h4>
-	<p><a href="http://trf2476.gitee.io/quanneng/logs.html" target="_blank"  alt="全能计算器交流群" title="全能计算器交流群">查看所有更新日志</a></p>
- </span>
-</ul>
-<p><a href="https://gitee.com/trf2476/qn/releases" class="btn btn-primary btn-lg" role="button">点我下载</a></p>
-      <p>QQ交流群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=8nK828tBzdOJEnrGBWjy1CllwQe-ua3N&jump_from=webapi"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="全能计算器交流群" title="全能计算器交流群"></a></p>
-     <p>病毒扫描安全：<a href="https://r.virscan.org/language/zh-cn/report/d9aace27de61aa02d857072ba9ed10ff" target="_blank">前往 virscan.org</a><p>
-  </div>
-  
+    <nav class="smart-nav morph">
+        <div class="nav-container morph">
+            <a href="#" class="nav-brand morph">trf2476</a>
+            <div class="nav-spacer morph"></div>
+            <ul class="nav-links morph">
+                <li><a href="/" class="morph">首页</a></li>
+                <li class="active"><a href="#" class="morph">全能计算器</a></li>
+                <li><a href="/mcfuwuqi" class="morph">MC服务器</a></li>
+                <li><a href="https://trf2476.blog.luogu.org/" class="morph" target="_blank">洛谷博客</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="page-container morph">
+        <section class="smart-hero morph">
+            
+            <div class="hero-grey-bg"></div>
+            <!-- 计算器 Logo 依然在中央沉浮 -->
+            <img src="/ico/logo.jpg" alt="计算器Logo" class="bg-logo">
+            
+            <div class="hero-content morph">
+                <h1 class="smart-title morph">全能计算器</h1>
+                <!-- 版本号颜色改为了灵动的赛博青 -->
+                <div class="smart-version morph">v4.0</div>
+                <p class="smart-slogan morph">快速 · 简洁 · 方便</p>
+                
+                <div class="new-elements-container morph">
+                    <p class="new-slogan-text">极速。极简。超高精度。</p>
+                    <a href="https://gitee.com/trf2476/qn/releases" class="btn-apple" target="_blank">立即下载</a>
+                </div>
+            </div>
+            
+            <div class="scroll-indicator">向下滚动探索新特性<br>↓</div>
+        </section>
+
+        <section class="smart-changelog morph">
+            <div class="changelog-inner">
+                <h2 style="font-size: 30px; margin-bottom: 15px;">全能计算器 v4.0 <span style="background-color: #f0ad4e; color: #fff; padding: 3px 7px; border-radius: 4px; font-size: 12px;">★★★★★</span></h2>
+                <h3 style="font-size: 24px; margin-bottom: 10px;">当前版本更新日志</h3>
+                <ul style="list-style-type: disc; padding-left: 20px; line-height: 1.8;">
+                    <li style="font-size: 18px;">新增命令行模式，支持 qn 命令快速计算。</li>
+                    <li style="font-size: 18px;">新增 env 命令，一键配置环境变量。</li>
+                    <li style="font-size: 18px;">高精度运算升级，支持理论无限整数运算，浮点数支持约 15 万位有效数字，并优化计算速度。</li>
+                    <li style="font-size: 18px;">官网变更为 trf2476.github.io/quanneng 。</li>
+                    <li style="font-size: 18px;">（2026.2）</li>
+                </ul>
+                <p style="margin-top: 15px;"><a href="http://trf2476.github.io/quanneng/logs.html" target="_blank" style="color: #337ab7;">查看所有更新日志</a></p>
+                <p style="margin-top: 15px;"><a href="https://gitee.com/trf2476/qn/releases" style="display: inline-block; padding: 10px 16px; font-size: 18px; border-radius: 6px; color: #fff; background-color: #337ab7; text-decoration: none;" target="_blank">点我下载</a></p>
+                <p style="margin-top: 15px; font-size: 14px;">QQ交流群：<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=8nK828tBzdOJEnrGBWjy1CllwQe-ua3N&jump_from=webapi"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="全能计算器交流群"></a></p>
+                <p style="font-size: 14px;">病毒扫描安全：<a href="https://r.virscan.org/language/zh-cn/report/d9aace27de61aa02d857072ba9ed10ff" target="_blank" style="color: #337ab7;">前往 virscan.org</a></p>
+            </div>
+        </section>
+
+        <section class="features-wrapper">
+            <div class="feature-row reveal-item">
+                <div class="feature-text">
+                    <h2>一键 qn，<br>极速响应。</h2>
+                    <p>全新引入原生命令行模式。无需繁琐的鼠标点击，在终端输入 <code>qn</code> 即可瞬间唤醒。让强大的算力无缝融入你的开发心流，快如闪电。</p>
+                </div>
+                <div class="feature-visual">
+                    <div class="terminal">
+                        <div class="terminal-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <div class="terminal-body">
+                            $ <span class="cmd">qn "1024 * 768"</span><br>
+                            <span class="result">= 786432</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row reveal-item">
+                <div class="feature-text">
+                    <h2>化繁为简，<br>一步就绪。</h2>
+                    <p>告别繁杂的系统高级设置。一句轻巧的 <code>env</code> 指令，全自动完成全局环境变量部署。开箱即用，从未如此简单优雅。</p>
+                </div>
+                <div class="feature-visual">
+                    <div style="text-align: center;">
+                        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(255,255,255,0.1); display: inline-flex; align-items:center; justify-content:center; font-size:24px; font-weight:bold; margin-bottom: 20px;">env</div>
+                        <div style="height: 40px; border-left: 2px dashed rgba(255,255,255,0.2); margin: 0 auto; width: 2px;"></div>
+                        <div style="padding: 10px 30px; border-radius: 20px; background: #0071e3; color: white; font-weight: bold; margin-top: 10px; box-shadow: 0 0 20px rgba(0,113,227,0.4);">系统变量已配置</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row reveal-item">
+                <div class="feature-text">
+                    <h2>超高精度，<br>深不见底。</h2>
+                    <p>搭载全新重构的高精度引擎，支持理论<b>无限位</b>整数运算，以及高达 <b>15 万位</b>的浮点有效数字。并且计算速度超快，无需等待。</p>
+                </div>
+                <div class="feature-visual">
+                    <div class="number-waterfall" id="pi-bg"></div>
+                    <div class="infinity-icon">∞</div>
+                </div>
+            </div>
+
+            <div class="feature-row reveal-item" style="justify-content: center; text-align: center; margin-top: 100px; margin-bottom: 50px;">
+                <div>
+                    <h2 style="font-size: 36px; margin-bottom: 30px;">准备好重塑计算了吗？</h2>
+                    <a href="https://gitee.com/trf2476/qn/releases" class="btn-apple" target="_blank">免费下载 v4.0</a>
+                    <p style="margin-top: 30px; color: #777; font-size: 14px;">
+                        加入 QQ 交流群：<a href="https://qm.qq.com/q/Ymx9Xhu1Ou" style="color: #a1a1a6;">点击加入</a> |
+                        <a href="/logs.html" target="_blank" style="color: #a1a1a6;">所有更新日志</a>
+                        
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const piBg = document.getElementById('pi-bg');
+            let numbers = "3.";
+            for(let i=0; i<300; i++) { numbers += Math.random().toString().slice(2); }
+            piBg.innerText = numbers + numbers;
+
+            setTimeout(() => {
+                document.documentElement.classList.remove('old-theme');
+                document.documentElement.classList.add('new-theme');
+                document.body.classList.remove('old-theme');
+                document.body.classList.add('new-theme');
+            }, 1500); 
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.2 });
+
+            document.querySelectorAll('.reveal-item').forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>
