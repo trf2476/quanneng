@@ -264,12 +264,19 @@
             .feature-text h2 { font-size: 36px; }
             .feature-text p { font-size: 16px; }
             .anniversary-badge { right: -38px; top: -6px; font-size: 12px; padding: 3px 7px; }
-            
+
             .smart-nav .nav-container { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 20px;}
             .smart-nav .nav-container::-webkit-scrollbar { display: none; }
             .smart-nav .nav-links { gap: 20px; }
-            
+
             body.old-theme .smart-hero { padding: 40px 20px; }
+
+            /* 移动端流光优化 - 保持和电脑端一样亮 */
+            .color-blob { filter: blur(120px); opacity: 0.8; }
+            .blob-1 { width: 60vw; height: 60vw; animation: float1 7s infinite alternate ease-in-out; }
+            .blob-2 { width: 50vw; height: 50vw; animation: float2 10s infinite alternate ease-in-out; }
+            .blob-3 { width: 40vw; height: 40vw; animation: float3 11s infinite alternate ease-in-out; }
+            .blob-4 { width: 45vw; height: 45vw; animation: float4 9s infinite alternate ease-in-out; }
         }
 
         @media (max-width: 480px) {
