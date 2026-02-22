@@ -11,7 +11,6 @@
         /* ==========================================================================
            0. 底层背景同步 & 环境氛围光 (流光溢彩)
            ========================================================================== */
-        /* 底色改为极其深邃的午夜蓝，而非死黑 */
         html { transition: background-color 1.2s cubic-bezier(0.76, 0, 0.24, 1); }
         html.old-theme { background-color: #ffffff; }
         html.new-theme { background-color: #05050e; }
@@ -23,37 +22,63 @@
             overflow-x: hidden; 
             font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; 
             -webkit-font-smoothing: antialiased; 
-            transition: background-color 1.2s cubic-bezier(0.76, 0, 0.24, 1), color 1.2s;
+            transition: color 1.2s; 
+            background-color: transparent !important; 
         }
         
-        body.old-theme { background-color: #ffffff; color: #333; }
-        body.new-theme { background-color: #05050e; color: #f5f5f7; }
+        body.old-theme { color: #333; }
+        body.new-theme { color: #f5f5f7; }
         
         /* --- 绚丽的流光溢彩背景 --- */
         .ambient-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1; pointer-events: none; overflow: hidden;
-            opacity: 0; transition: opacity 3s ease 1s; /* 延迟1秒，在变黑后缓缓浮现 */
+            z-index: 0; 
+            pointer-events: none; overflow: hidden;
+            opacity: 0; transition: opacity 3s ease 1s; 
         }
         body.new-theme .ambient-bg { opacity: 1; }
 
         .color-blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(140px); /* 极其强烈的模糊，制造高级光晕感 */
-            animation: drift 15s infinite alternate ease-in-out;
+            filter: blur(140px); /* 保持高级的模糊感 */
             opacity: 0.6;
         }
-        /* 魅惑紫 */
-        .blob-1 { width: 60vw; height: 60vw; background: #5a189a; top: -20%; left: -10%; animation-delay: 0s; }
-        /* 深海蓝 */
-        .blob-2 { width: 50vw; height: 50vw; background: #0077b6; bottom: -10%; right: -20%; animation-delay: -5s; }
-        /* 赛博青 */
-        .blob-3 { width: 40vw; height: 40vw; background: #00f5d4; top: 40%; left: 30%; animation-delay: -10s; opacity: 0.3; }
+        
+        /* 为每个光晕设置完全不同的游走路径、缩放和时间，制造不规则的流体感 */
+        .blob-1 { 
+            width: 60vw; height: 60vw; background: #5a189a; top: -20%; left: -10%; 
+            animation: float1 7s infinite alternate ease-in-out; 
+        }
+        .blob-2 { 
+            width: 50vw; height: 50vw; background: #0077b6; bottom: -10%; right: -20%; 
+            animation: float2 10s infinite alternate ease-in-out; 
+        }
+        .blob-3 { 
+            width: 40vw; height: 40vw; background: #00f5d4; top: 40%; left: 30%; opacity: 0.3;
+            animation: float3 5s infinite alternate ease-in-out; 
+        }
+        .blob-4 { 
+            width: 45vw; height: 45vw; background: #ffb703; bottom: 20%; left: 20%; opacity: 0.35; mix-blend-mode: screen;
+            animation: float4 9s infinite alternate ease-in-out; 
+        }
 
-        @keyframes drift {
+        /* --- 动感流光轨迹帧 --- */
+        @keyframes float1 {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(8%, 8%) scale(1.1); }
+            100% { transform: translate(40vw, 20vh) scale(1.2); }
+        }
+        @keyframes float2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-40vw, -30vh) scale(1.1); }
+        }
+        @keyframes float3 {
+            0% { transform: translate(0, 0) scale(1.2); }
+            100% { transform: translate(-30vw, 40vh) scale(0.8); }
+        }
+        @keyframes float4 {
+            0% { transform: translate(0, 0) scale(0.9); }
+            100% { transform: translate(40vw, -20vh) scale(1.3); }
         }
 
         .morph { transition: all 1.2s cubic-bezier(0.76, 0, 0.24, 1); }
@@ -69,7 +94,7 @@
         
         body.old-theme .smart-nav { background: #f8f8f8; border-bottom: 1px solid #e7e7e7; height: 50px; }
         body.old-theme .nav-container { width: 1170px; max-width: 100%; padding: 0 15px; }
-        body.old-theme .nav-brand { color: #337ab7; font-size: 18px; padding: 15px; font-weight: bold;}
+        body.old-theme .nav-brand { color: #777; font-size: 18px; padding: 15px; }
         body.old-theme .nav-spacer { flex-grow: 0; width: 0; }
         body.old-theme .nav-links { gap: 0px; }
         body.old-theme .nav-links li a { color: #777; padding: 15px; line-height: 20px; font-size: 14px;}
@@ -86,14 +111,15 @@
         /* ==========================================================================
            2. 首屏巨幕与文字绝对平滑过渡
            ========================================================================== */
-        .page-container { min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        .page-container { 
+            position: relative; z-index: 1; 
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
+        }
         
         body.old-theme .page-container { padding-top: 80px; }
         body.new-theme .page-container { padding-top: 0; }
 
-        .smart-hero { 
-            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
+        .smart-hero { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
         .hero-grey-bg {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -107,18 +133,31 @@
         body.old-theme .smart-hero { width: 1140px; max-width: 90%; margin-bottom: 30px; padding: 48px 60px; min-height: 250px;}
         body.new-theme .smart-hero { width: 100vw; max-width: 100%; margin: 0; padding: 0; flex-grow: 1; min-height: 100vh; }
 
-        /* 背景Logo */
         .bg-logo { position: absolute; top: 50%; left: 50%; width: 60vw; max-width: 600px; transform: translate(-50%, -50%) scale(0.8); opacity: 0; filter: blur(2px) grayscale(100%); pointer-events: none; transition: all 2s cubic-bezier(0.76, 0, 0.24, 1); z-index: 0; }
         body.new-theme .bg-logo { opacity: 0.08; transform: translate(-50%, -50%) scale(1); animation: logo-pulse 8s ease-in-out infinite alternate 1.5s; }
         @keyframes logo-pulse { 0% { opacity: 0.04; transform: translate(-50%, -50%) scale(0.95); } 100% { opacity: 0.12; transform: translate(-50%, -50%) scale(1.05); } }
 
-        .smart-title { font-weight: 600; }
-        body.old-theme .smart-title { font-size: 63px; letter-spacing: 0px; color: #333; text-shadow: 0 0 0 rgba(255,255,255,0); margin-bottom: 15px; }
+        .smart-title { font-weight: 600; position: relative; display: inline-block; }
+        body.old-theme .smart-title { font-size: 63px; letter-spacing: 0px; color: #333; margin-bottom: 15px; }
         body.new-theme .smart-title { font-size: 80px; letter-spacing: -2px; color: #ffffff; text-shadow: 0 4px 30px rgba(255,255,255,0.4); margin-bottom: 15px; }
         
-        body.old-theme .smart-version { font-size: 30px; font-weight: 600; color: #5bc0de; margin-bottom: 15px; border: 1px solid transparent; background: rgba(255,255,255,0); padding: 0 0; border-radius: 0px;}
-        body.new-theme .smart-version { font-size: 14px; font-weight: 600; color: #00f5d4; margin-bottom: 20px; border: 1px solid rgba(0, 245, 212, 0.3); background: rgba(255,255,255,0.05); padding: 4px 14px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,245,212,0.1); }
+        body.old-theme .smart-version { 
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+            font-size: 30px; font-weight: 600; color: #5bc0de; margin-bottom: 15px; 
+            border: 1px solid transparent; background: rgba(255,255,255,0); padding: 0; border-radius: 0px;
+        }
+        body.new-theme .smart-version { 
+            position: relative; display: inline-flex; align-items: center; justify-content: center; 
+            font-size: 14px; font-weight: 600; color: #00f5d4; margin-bottom: 20px; 
+            border: 1px solid rgba(0, 245, 212, 0.3); background: rgba(255,255,255,0.05); 
+            padding: 4px 14px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,245,212,0.1); 
+        }
         
+        .anniversary-badge {
+            position: absolute; top: -12px; right: -55px; background: linear-gradient(135deg, #FFB703, #E2574C); color: #fff; padding: 4px 10px; border-radius: 8px 8px 8px 2px; font-size: 14px; font-weight: 800; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(255, 183, 3, 0.4); white-space: nowrap; pointer-events: none; opacity: 0; transform: scale(0); transform-origin: bottom left; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        body.new-theme .anniversary-badge { opacity: 1; transform: scale(1); transition-delay: 1.6s; }
+
         .smart-slogan { overflow: hidden; transition: all 0.6s cubic-bezier(0.76, 0, 0.24, 1); }
         body.old-theme .smart-slogan { font-size: 21px; font-weight: 400; color: #777; max-height: 50px; opacity: 1; margin: 0; transform: scale(1);}
         body.new-theme .smart-slogan { font-size: 21px; font-weight: 400; color: #777; max-height: 0; opacity: 0; margin: 0; transform: scale(0.8);}
@@ -126,11 +165,12 @@
         /* ==========================================================================
            3. 新元素与旧日志交替
            ========================================================================== */
-        .new-elements-container { display: flex; flex-direction: column; align-items: center; overflow: hidden; z-index: 10;}
+        .new-elements-container { display: flex; flex-direction: column; align-items: center; overflow: hidden; z-index: 10; text-align: center;}
         body.old-theme .new-elements-container { max-height: 0; opacity: 0; transform: translateY(30px); margin-top: 0; }
         body.new-theme .new-elements-container { max-height: 300px; opacity: 1; transform: translateY(0); margin-top: 20px; transition-delay: 0.3s; }
         
-        .new-slogan-text { font-size: 32px; font-weight: 500; color: #f5f5f7; margin-bottom: 30px; }
+        .new-slogan-text { font-size: 32px; font-weight: 500; color: #f5f5f7; margin-bottom: 30px; line-height: 1.4; }
+
         .btn-apple { display: inline-block; background: #0071e3; color: #fff; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-size: 18px; font-weight: 600; transition: all 0.3s ease; }
         .btn-apple:hover { transform: scale(1.05); background: #0077ED; box-shadow: 0 4px 25px rgba(0, 113, 227, 0.6); }
 
@@ -147,7 +187,40 @@
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
 
         /* ==========================================================================
-           4. 苹果风特性展示区 (毛玻璃质感升级)
+           4. 庆祝粒子动画
+           ========================================================================== */
+        .confetti-particle { position: fixed; width: 8px; height: 16px; background-color: #FFD700; opacity: 1; z-index: 9999; pointer-events: none; border-radius: 3px; box-shadow: 0 0 15px currentColor, 0 0 30px currentColor; top: -30px; }
+        @keyframes confetti-fall { 0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); } 80% { opacity: 0.8; } 100% { opacity: 0; transform: translateY(120vh) rotate(720deg) scale(0.5); } }
+
+        /* ==========================================================================
+           5. 动图实机展示区 CSS
+           ========================================================================== */
+        .demo-showcase { 
+            max-width: 1000px; margin: 0 auto 100px; padding: 0 5%; 
+            text-align: center; z-index: 10; position: relative;
+            opacity: 0; max-height: 0; overflow: hidden; transition: all 1.5s ease;
+        }
+        body.new-theme .demo-showcase { opacity: 1; max-height: 1000px; margin-top: 100px; overflow: visible;}
+        
+        .demo-title h2 { font-size: 40px; margin-bottom: 15px; letter-spacing: -1px; }
+        .demo-title p { font-size: 18px; color: #a1a1a6; margin-bottom: 40px; }
+        
+        .demo-window {
+            background: rgba(20,20,25,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6); overflow: hidden;
+        }
+        .window-header {
+            background: rgba(40,40,45,0.8); padding: 12px 15px; display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .window-content {
+            position: relative; width: 100%; aspect-ratio: 1704 / 898; 
+            background: #000; display: flex; align-items: center; justify-content: center;
+        }
+        .demo-gif { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ==========================================================================
+           6. 苹果风特性展示区
            ========================================================================== */
         .features-wrapper { max-width: 1200px; margin: 0 auto; padding: 100px 5%; transition: opacity 1.5s ease 1s; position: relative; z-index: 10; }
         body.old-theme .features-wrapper { opacity: 0; pointer-events: none; max-height: 0; overflow: hidden; padding: 0 5%;}
@@ -159,7 +232,6 @@
         .feature-text h2 { font-size: 48px; font-weight: 700; margin-bottom: 20px; letter-spacing: -1px; }
         .feature-text p { font-size: 20px; color: #a1a1a6; line-height: 1.6; }
         
-        /* 毛玻璃卡片在有色彩背景下的质感提升 */
         .feature-visual { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 40px; backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); box-shadow: 0 30px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden; height: 350px; display: flex; align-items: center; justify-content: center; }
 
         .terminal { width: 100%; background: rgba(20,20,25,0.8); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.5); overflow: hidden; font-family: 'Courier New', Courier, monospace;}
@@ -177,15 +249,45 @@
         .reveal-item { opacity: 0; transform: translateY(60px); transition: all 1s cubic-bezier(0.76, 0, 0.24, 1); }
         .reveal-item.is-visible { opacity: 1; transform: translateY(0); }
 
+        /* ==========================================================================
+           7. 响应式与移动端完美适配
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .feature-row { flex-direction: column !important; text-align: center; gap: 30px; margin-bottom: 100px; }
+            .feature-visual { width: 100%; height: 300px; }
+        }
+
+        @media (max-width: 768px) {
+            body.new-theme .smart-title { font-size: 50px; }
+            .new-slogan-text { font-size: 24px; }
+            .demo-title h2 { font-size: 32px; }
+            .feature-text h2 { font-size: 36px; }
+            .feature-text p { font-size: 16px; }
+            .anniversary-badge { right: -38px; top: -6px; font-size: 12px; padding: 3px 7px; }
+            
+            .smart-nav .nav-container { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 20px;}
+            .smart-nav .nav-container::-webkit-scrollbar { display: none; }
+            .smart-nav .nav-links { gap: 20px; }
+            
+            body.old-theme .smart-hero { padding: 40px 20px; }
+        }
+
+        @media (max-width: 480px) {
+            body.new-theme .smart-title { font-size: 40px; }
+            .btn-apple { padding: 12px 30px; font-size: 16px; }
+            .demo-title h2 { font-size: 28px; }
+        }
+
     </style>
 </head>
 <body class="old-theme">
 
-    <!-- 流光溢彩的环境背景 -->
+    <!-- 游走的流光背景 -->
     <div class="ambient-bg">
         <div class="color-blob blob-1"></div>
         <div class="color-blob blob-2"></div>
         <div class="color-blob blob-3"></div>
+        <div class="color-blob blob-4"></div>
     </div>
 
     <nav class="smart-nav morph">
@@ -205,24 +307,29 @@
         <section class="smart-hero morph">
             
             <div class="hero-grey-bg"></div>
-            <!-- 计算器 Logo 依然在中央沉浮 -->
-            <img src="./ico/logo.jpg" alt="计算器Logo" class="bg-logo">
+            <img src="./ico/logo.ico" alt="计算器Logo" class="bg-logo">
             
             <div class="hero-content morph">
-                <h1 class="smart-title morph">全能计算器</h1>
-                <!-- 版本号颜色改为了灵动的赛博青 -->
-                <div class="smart-version morph">v4.0</div>
+                <h1 class="smart-title morph">全能计算器
+                    <span class="anniversary-badge">五周年</span>
+                </h1>
+                
+                <div class="smart-version morph">
+                    v4.0
+                </div>
+                
                 <p class="smart-slogan morph">快速 · 简洁 · 方便</p>
                 
                 <div class="new-elements-container morph">
                     <p class="new-slogan-text">极速。极简。超高精度。</p>
-                    <a href="https://gitee.com/trf2476/qn/releases" class="btn-apple" target="_blank">立即下载</a>
+                    <a href="https://gitee.com/trf2476/qn/releases" class="btn-apple" target="_blank">立即下载 v4.0</a>
                 </div>
             </div>
             
             <div class="scroll-indicator">向下滚动探索新特性<br>↓</div>
         </section>
 
+        <!-- 旧版更新日志 -->
         <section class="smart-changelog morph">
             <div class="changelog-inner">
                 <h2 style="font-size: 30px; margin-bottom: 15px;">全能计算器 v4.0 <span style="background-color: #f0ad4e; color: #fff; padding: 3px 7px; border-radius: 4px; font-size: 12px;">★★★★★</span></h2>
@@ -241,6 +348,23 @@
             </div>
         </section>
 
+        <!-- 动图实机演示玻璃展示台 -->
+        <section class="demo-showcase reveal-item">
+            <div class="demo-title">
+                <h2>所见，即所超能。</h2>
+                <p>全新界面交互，体验行云流水般的顺滑。</p>
+            </div>
+            <div class="demo-window">
+                <div class="window-header">
+                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                </div>
+                <div class="window-content">
+                    <img src="./demo/v4.0demo.gif" alt="实机演示动图" class="demo-gif">
+                </div>
+            </div>
+        </section>
+
+        <!-- 苹果风特性区 -->
         <section class="features-wrapper">
             <div class="feature-row reveal-item">
                 <div class="feature-text">
@@ -290,7 +414,6 @@
                     <p style="margin-top: 30px; color: #777; font-size: 14px;">
                         加入 QQ 交流群：<a href="https://qm.qq.com/q/Ymx9Xhu1Ou" style="color: #a1a1a6;">点击加入</a> |
                         <a href="./logs.html" target="_blank" style="color: #a1a1a6;">所有更新日志</a>
-                        
                     </p>
                 </div>
             </div>
@@ -298,6 +421,28 @@
     </main>
 
     <script>
+        function triggerConfetti() {
+            const colors = ['#FFD700', '#FFA500', '#FF8C00', '#00f5d4', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A1', '#FF1493', '#00CED1'];
+            for (let i = 0; i < 247; i++) {
+                let conf = document.createElement('div');
+                conf.className = 'confetti-particle';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.color = conf.style.backgroundColor;
+                const scale = Math.random() * 1.0 + 0.5;
+                conf.style.transform = `scale(${scale})`;
+                // 动画时长 2.5~5秒
+                const duration = Math.random() * 2.5 + 2.5;
+                conf.style.animation = `confetti-fall ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`;
+                // 延迟 0~1秒内随机爆发，更集中
+                conf.style.animationDelay = `${Math.random() * 2}s`;
+                document.body.appendChild(conf);
+
+                // 等待动画完成后清理 DOM
+                setTimeout(() => { if(conf && conf.parentNode) conf.remove(); }, duration * 1000 + 1000);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const piBg = document.getElementById('pi-bg');
             let numbers = "3.";
@@ -309,6 +454,8 @@
                 document.documentElement.classList.add('new-theme');
                 document.body.classList.remove('old-theme');
                 document.body.classList.add('new-theme');
+                
+                triggerConfetti();
             }, 1500); 
 
             const observer = new IntersectionObserver((entries, observer) => {
